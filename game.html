@@ -1,0 +1,2354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Quiz Money Game</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at 15% 15%, #fff9d8 0 3px, transparent 4px),
+        radial-gradient(circle at 85% 25%, #ffe98a 0 3px, transparent 4px),
+        #fff0a8;
+    background-size: 120px 120px, 150px 150px;
+    color: #4b3e1d;
+    font-family: "DM Sans", sans-serif;
+    overflow-x: hidden;
+}
+
+.pixel-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.pixel {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    background: #f8d75b;
+    box-shadow:
+        14px 0 #ffe889,
+        0 14px #ffe889,
+        14px 14px #f5d05a;
+    opacity: .45;
+}
+
+.p1 { top: 10%; left: 7%; }
+.p2 { top: 30%; right: 8%; transform: rotate(45deg); }
+.p3 { bottom: 18%; left: 9%; }
+.p4 { bottom: 10%; right: 12%; transform: rotate(45deg); }
+
+.container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 950px;
+    min-height: 100vh;
+    margin: auto;
+    padding: 35px 20px;
+}
+
+.screen {
+    display: none;
+    min-height: calc(100vh - 70px);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.screen.active {
+    display: flex;
+}
+
+.pixel-panel {
+    position: relative;
+    background: #fffbe2;
+    border: 4px solid #e0bf3e;
+    box-shadow:
+        0 7px 0 #c9a92f,
+        7px 0 0 #c9a92f;
+    image-rendering: pixelated;
+}
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+.login-card {
+    width: 100%;
+    max-width: 520px;
+    text-align: center;
+    padding: 45px 30px 40px;
+    border-radius: 12px;
+}
+
+.login-icon {
+    font-size: 55px;
+    margin-bottom: 20px;
+    animation: coinFloat 2s ease-in-out infinite;
+}
+
+.login-title {
+    font-family: "Press Start 2P", cursive;
+    font-size: clamp(22px, 5vw, 32px);
+    line-height: 1.6;
+    color: #4b3c18;
+    text-shadow: 3px 3px 0 #e6c84d;
+    margin-bottom: 10px;
+}
+
+.login-subtitle {
+    font-family: "DM Sans", sans-serif;
+    font-size: 14px;
+    color: #817344;
+    margin-bottom: 28px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+}
+
+.login-label {
+    font-family: "DM Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #6e6035;
+    margin-bottom: -8px;
+}
+
+.login-input {
+    width: 100%;
+    padding: 15px;
+    background: #fffdf0;
+    border: 3px solid #d8b83c;
+    outline: none;
+    font-family: "DM Sans", sans-serif;
+    font-size: 15px;
+    color: #4b3e1d;
+    box-shadow: 4px 4px 0 #c4a52d;
+}
+
+.login-input:focus {
+    border-color: #b99b25;
+    background: #fffbea;
+}
+
+.login-input::placeholder {
+    color: #aaa078;
+}
+
+.login-button {
+    margin-top: 8px;
+    width: 100%;
+}
+
+.login-error {
+    display: none;
+    margin-top: 18px;
+    padding: 12px;
+    background: #f6d2bd;
+    border: 3px solid #c98f70;
+    color: #70442f;
+    font-family: "DM Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.login-error.show {
+    display: block;
+}
+
+/* =========================================================
+   OPENING
+========================================================= */
+
+.opening-card {
+    width: 100%;
+    max-width: 720px;
+    text-align: center;
+    padding: 55px 35px 50px;
+    border-radius: 12px;
+}
+
+.corner {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #f5d457;
+}
+
+.corner.tl { top: 14px; left: 14px; }
+.corner.tr { top: 14px; right: 14px; }
+.corner.bl { bottom: 14px; left: 14px; }
+.corner.br { bottom: 14px; right: 14px; }
+
+.coin {
+    display: inline-flex;
+    width: 75px;
+    height: 75px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #f6d65d;
+    border: 5px solid #c9a92f;
+    box-shadow:
+        inset -5px -5px 0 #d4b43b,
+        5px 5px 0 #b99827;
+    font-size: 35px;
+    margin-bottom: 25px;
+    animation: coinFloat 2s ease-in-out infinite;
+}
+
+@keyframes coinFloat {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.game-title {
+    font-family: "Press Start 2P", cursive;
+    font-size: clamp(28px, 5vw, 48px);
+    line-height: 1.45;
+    color: #4b3c18;
+    text-shadow: 4px 4px 0 #e6c84d;
+    margin-bottom: 20px;
+}
+
+.subtitle {
+    font-family: "DM Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: #817344;
+    letter-spacing: .2px;
+    margin-bottom: 35px;
+}
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.pixel-button {
+    border: 3px solid #c3a42f;
+    background: #f5d34f;
+    color: #4a3a13;
+    font-family: "Press Start 2P", cursive;
+    font-size: 13px;
+    padding: 17px 25px;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 #aa8c25;
+    transition: .12s;
+    image-rendering: pixelated;
+}
+
+.pixel-button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 #aa8c25;
+    background: #f8db68;
+}
+
+.pixel-button:active {
+    transform: translate(4px, 4px);
+    box-shadow: 1px 1px 0 #aa8c25;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading-box {
+    text-align: center;
+}
+
+.loading-coin {
+    font-size: 65px;
+    animation: spinCoin 1s steps(4) infinite;
+}
+
+@keyframes spinCoin {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
+}
+
+.loading-text {
+    margin-top: 22px;
+    font-family: "DM Sans", sans-serif;
+    font-size: 15px;
+    color: #75673a;
+}
+
+/* =========================================================
+   HUD
+========================================================= */
+
+.hud {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.hud-item {
+    background: #fffbe2;
+    border: 3px solid #d8b83c;
+    padding: 11px 15px;
+    box-shadow: 4px 4px 0 #bfa12e;
+    font-family: "Press Start 2P", cursive;
+    font-size: 10px;
+}
+
+.money {
+    color: #9b7610;
+}
+
+/* =========================================================
+   ROUNDS
+========================================================= */
+
+.round-wrapper {
+    width: 100%;
+}
+
+.round-heading {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.round-heading h2 {
+    font-family: "Press Start 2P", cursive;
+    font-size: 25px;
+    line-height: 1.6;
+    text-shadow: 3px 3px 0 #e5c54b;
+    margin-bottom: 8px;
+}
+
+.round-heading p {
+    font-family: "DM Sans", sans-serif;
+    font-size: 14px;
+    color: #796c3d;
+}
+
+.rounds-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.round-card {
+    position: relative;
+    background: #fffbe2;
+    border: 4px solid #e1c34a;
+    padding: 27px 20px;
+    text-align: center;
+    box-shadow: 6px 6px 0 #c4a52d;
+    transition: .15s;
+}
+
+.round-card:not(.locked):hover {
+    transform: translateY(-5px);
+    box-shadow: 6px 11px 0 #c4a52d;
+}
+
+.round-badge {
+    display: inline-block;
+    background: #f5d457;
+    border: 3px solid #c3a32e;
+    padding: 8px 10px;
+    font-family: "Press Start 2P", cursive;
+    font-size: 9px;
+    margin-bottom: 16px;
+}
+
+.round-number {
+    font-family: "Press Start 2P", cursive;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.round-name {
+    font-family: "Press Start 2P", cursive;
+    font-size: 12px;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+
+.reward {
+    font-family: "DM Sans", sans-serif;
+    font-size: 13px;
+    color: #817344;
+    margin-bottom: 18px;
+}
+
+.lock-message {
+    font-family: "DM Sans", sans-serif;
+    font-size: 12px;
+    color: #8c8058;
+}
+
+.lock-icon {
+    font-size: 25px;
+    margin-bottom: 8px;
+}
+
+.round-button {
+    border: 3px solid #c3a42f;
+    background: #f5d34f;
+    color: #4b3b16;
+    font-family: "Press Start 2P", cursive;
+    font-size: 9px;
+    padding: 12px 14px;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #aa8c25;
+}
+
+.round-button:hover {
+    transform: translate(-2px,-2px);
+}
+
+.round-card.locked {
+    opacity: .53;
+    filter: saturate(.7);
+    box-shadow: 6px 6px 0 #c8bd84;
+}
+
+/* =========================================================
+   GAME
+========================================================= */
+
+.game-wrapper {
+    width: 100%;
+}
+
+.progress-area {
+    width: 100%;
+    margin-bottom: 18px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-family: "DM Sans", sans-serif;
+    font-size: 12px;
+    color: #77683a;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 13px;
+    background: #e6d99a;
+    border: 3px solid #c8ad43;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #f0ca3e;
+    transition: width .3s ease;
+}
+
+.question-card {
+    width: 100%;
+    background: #fffbe2;
+    border: 4px solid #ddbd40;
+    padding: 34px;
+    box-shadow: 7px 7px 0 #c4a52d;
+}
+
+.question-number {
+    font-family: "Press Start 2P", cursive;
+    font-size: 9px;
+    color: #9b8130;
+    margin-bottom: 18px;
+}
+
+.question {
+    font-family: "Press Start 2P", cursive;
+    font-size: clamp(15px, 3vw, 21px);
+    line-height: 1.8;
+    color: #493a15;
+    margin-bottom: 28px;
+}
+
+.choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.choice {
+    position: relative;
+    text-align: left;
+    background: #fff6c7;
+    border: 3px solid #ddc25c;
+    padding: 17px 15px;
+    font-family: "Press Start 2P", cursive;
+    font-size: 10px;
+    line-height: 1.7;
+    color: #4d3f1b;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #c4a941;
+    transition: .12s;
+}
+
+.choice:hover:not(:disabled) {
+    transform: translate(-2px,-2px);
+    background: #fff0a4;
+    box-shadow: 6px 6px 0 #c4a941;
+}
+
+.choice:active:not(:disabled) {
+    transform: translate(3px,3px);
+    box-shadow: 1px 1px 0 #c4a941;
+}
+
+.choice.correct {
+    background: #dff1bd;
+    border-color: #9ab75f;
+    box-shadow: 4px 4px 0 #7d9d45;
+}
+
+.choice.wrong {
+    background: #f6d2bd;
+    border-color: #c98f70;
+    box-shadow: 4px 4px 0 #a96f53;
+}
+
+.choice:disabled {
+    cursor: default;
+}
+
+.next-button {
+    display: none;
+    margin: 25px auto 0;
+}
+
+.next-button.show {
+    display: block;
+}
+
+/* =========================================================
+   COMPLETE / FINAL
+========================================================= */
+
+.complete-card,
+.final-card {
+    width: 100%;
+    max-width: 700px;
+    text-align: center;
+    padding: 45px 30px;
+}
+
+.big-pixel-icon {
+    font-size: 58px;
+    margin-bottom: 20px;
+    animation: iconBounce 1s steps(2) infinite;
+}
+
+@keyframes iconBounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-7px); }
+}
+
+.complete-card h2,
+.final-card h2 {
+    font-family: "Press Start 2P", cursive;
+    font-size: clamp(20px, 4vw, 30px);
+    line-height: 1.6;
+    text-shadow: 3px 3px 0 #e3c44a;
+    margin-bottom: 18px;
+}
+
+.complete-card p,
+.final-card p {
+    font-family: "DM Sans", sans-serif;
+    font-size: 15px;
+    color: #776a42;
+    line-height: 1.6;
+}
+
+.earned {
+    font-family: "Press Start 2P", cursive !important;
+    font-size: 15px !important;
+    color: #806512 !important;
+    margin: 15px 0 !important;
+}
+
+.total {
+    font-family: "Press Start 2P", cursive !important;
+    font-size: 12px !important;
+    color: #66531d !important;
+}
+
+.final-money {
+    display: inline-block;
+    font-family: "Press Start 2P", cursive;
+    font-size: clamp(28px, 7vw, 50px);
+    color: #a67d08;
+    background: #fff2a7;
+    border: 4px solid #d5b435;
+    padding: 20px;
+    margin: 18px 0;
+    box-shadow: 6px 6px 0 #b39428;
+    animation: moneyPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes moneyPulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+
+.claim-message {
+    display: none;
+    margin: 22px auto;
+    max-width: 500px;
+    background: #fff4b5;
+    border: 3px solid #d9ba45;
+    padding: 20px;
+    font-family: "DM Sans", sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    box-shadow: 4px 4px 0 #c0a334;
+}
+
+.claim-message.show {
+    display: block;
+}
+
+.claim-title {
+    font-family: "Press Start 2P", cursive;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.play-again {
+    margin-top: 12px;
+    background: #fff8d8;
+}
+
+/* =========================================================
+   MUSIC
+========================================================= */
+
+.music-toggle {
+    position: fixed;
+    top: 17px;
+    right: 17px;
+    z-index: 20;
+    width: 45px;
+    height: 45px;
+    background: #fffbe2;
+    border: 3px solid #d1b13a;
+    box-shadow: 4px 4px 0 #b3962c;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+/* =========================================================
+   WARNING
+========================================================= */
+
+.warning-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(67, 57, 20, .38);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.warning-overlay.show {
+    display: flex;
+}
+
+.warning-box {
+    width: 100%;
+    max-width: 500px;
+    background: #fffbe2;
+    border: 4px solid #d5b83e;
+    padding: 32px 25px;
+    text-align: center;
+    box-shadow: 7px 7px 0 #b89b29;
+    animation: warningPop .18s steps(3);
+}
+
+@keyframes warningPop {
+    from { transform: scale(.8); }
+    to { transform: scale(1); }
+}
+
+.warning-icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+}
+
+.warning-box h3 {
+    font-family: "Press Start 2P", cursive;
+    font-size: 17px;
+    line-height: 1.7;
+    margin-bottom: 15px;
+}
+
+.warning-box p {
+    font-family: "DM Sans", sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #75683e;
+}
+
+.warning-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.cancel-button,
+.start-over-button {
+    border: 3px solid #c3a42f;
+    padding: 13px 17px;
+    font-family: "Press Start 2P", cursive;
+    font-size: 9px;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #aa8c25;
+}
+
+.cancel-button {
+    background: #eee7c7;
+    color: #5f563c;
+}
+
+.start-over-button {
+    background: #f5d34f;
+    color: #4b3a14;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .container {
+        padding: 25px 14px;
+    }
+
+    .login-card {
+        padding: 40px 20px 35px;
+    }
+
+    .opening-card {
+        padding: 45px 20px;
+    }
+
+    .game-title {
+        font-size: 25px;
+    }
+
+    .rounds-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .choices {
+        grid-template-columns: 1fr;
+    }
+
+    .question-card {
+        padding: 25px 17px;
+    }
+
+    .question {
+        font-size: 13px;
+    }
+
+    .choice {
+        font-size: 9px;
+    }
+
+    .hud-item {
+        font-size: 8px;
+        padding: 9px;
+    }
+
+    .warning-buttons {
+        flex-direction: column;
+    }
+
+    .cancel-button,
+    .start-over-button {
+        width: 100%;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="pixel-bg">
+    <div class="pixel p1"></div>
+    <div class="pixel p2"></div>
+    <div class="pixel p3"></div>
+    <div class="pixel p4"></div>
+</div>
+
+<button
+    class="music-toggle"
+    id="musicToggle"
+    onclick="toggleMusic()">
+    🔇
+</button>
+
+<div class="container">
+
+<!-- ======================================================
+     LOGIN
+====================================================== -->
+
+<section class="screen active" id="loginScreen">
+
+    <div class="login-card pixel-panel">
+
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+
+        <div class="login-icon">
+            🪙
+        </div>
+
+        <h1 class="login-title">
+            WELCOME!
+        </h1>
+
+        <p class="login-subtitle">
+            Enter your details to start the game.
+        </p>
+
+        <div class="login-form">
+
+            <label class="login-label">
+                NAME
+            </label>
+
+            <input
+                type="text"
+                id="loginName"
+                class="login-input"
+                placeholder="Enter your name"
+                autocomplete="off">
+
+            <label class="login-label">
+                PASSWORD
+            </label>
+
+            <input
+                type="password"
+                id="loginPassword"
+                class="login-input"
+                placeholder="Enter password"
+                autocomplete="off">
+
+            <button
+                class="pixel-button login-button"
+                onclick="loginGame()">
+
+                ▶ LOGIN
+
+            </button>
+
+        </div>
+
+        <div
+            class="login-error"
+            id="loginError">
+
+            Wrong name or password. Please try again!
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     OPENING
+====================================================== -->
+
+<section class="screen" id="openingScreen">
+
+    <div class="opening-card pixel-panel">
+
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+
+        <div class="coin">
+            🪙
+        </div>
+
+        <h1 class="game-title">
+            QUIZ<br>
+            MONEY GAME
+        </h1>
+
+        <p class="subtitle">
+            Answer correctly. Earn more!
+        </p>
+
+        <button
+            class="pixel-button"
+            onclick="startGame()">
+
+            ▶ START GAME
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     LOADING
+====================================================== -->
+
+<section class="screen" id="loadingScreen">
+
+    <div class="loading-box">
+
+        <div class="loading-coin">
+            🪙
+        </div>
+
+        <p class="loading-text">
+            Preparing your game...
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     ROUND SELECTION
+====================================================== -->
+
+<section class="screen" id="roundScreen">
+
+    <div class="round-wrapper">
+
+        <div class="hud">
+
+            <div class="hud-item">
+                LEVEL SELECT
+            </div>
+
+            <div
+                class="hud-item money"
+                id="roundMoneyDisplay">
+
+                💰 PHP 0
+
+            </div>
+
+        </div>
+
+        <div class="round-heading">
+
+            <h2>
+                CHOOSE YOUR ROUND
+            </h2>
+
+            <p>
+                Complete each level to unlock the next one.
+            </p>
+
+        </div>
+
+        <div class="rounds-grid">
+
+            <div
+                class="round-card"
+                id="roundCard0">
+
+                <div class="round-badge">
+                    LEVEL 01
+                </div>
+
+                <div class="lock-icon">
+                    🔓
+                </div>
+
+                <div class="round-number">
+                    ROUND 1
+                </div>
+
+                <div class="round-name">
+                    WARM-UP
+                </div>
+
+                <div class="reward">
+                    PHP 10 per correct answer
+                </div>
+
+                <button
+                    class="round-button"
+                    onclick="startRound(0)">
+
+                    PLAY ROUND
+
+                </button>
+
+            </div>
+
+
+            <div
+                class="round-card locked"
+                id="roundCard1">
+
+                <div class="round-badge">
+                    LEVEL 02
+                </div>
+
+                <div class="lock-icon">
+                    🔒
+                </div>
+
+                <div class="round-number">
+                    ROUND 2
+                </div>
+
+                <div class="round-name">
+                    GENERAL KNOWLEDGE
+                </div>
+
+                <div class="reward">
+                    PHP 20 per correct answer
+                </div>
+
+                <div class="lock-message">
+                    Complete Round 1 first
+                </div>
+
+            </div>
+
+
+            <div
+                class="round-card locked"
+                id="roundCard2">
+
+                <div class="round-badge">
+                    LEVEL 03
+                </div>
+
+                <div class="lock-icon">
+                    🔒
+                </div>
+
+                <div class="round-number">
+                    ROUND 3
+                </div>
+
+                <div class="round-name">
+                    ABOUT ME
+                </div>
+
+                <div class="reward">
+                    PHP 50 per correct answer
+                </div>
+
+                <div class="lock-message">
+                    Complete Round 2 first
+                </div>
+
+            </div>
+
+
+            <div
+                class="round-card locked"
+                id="roundCard3">
+
+                <div class="round-badge">
+                    LEVEL 04
+                </div>
+
+                <div class="lock-icon">
+                    🔒
+                </div>
+
+                <div class="round-number">
+                    ROUND 4
+                </div>
+
+                <div class="round-name">
+                    HOW WELL DO YOU KNOW ME?
+                </div>
+
+                <div class="reward">
+                    PHP 20 per correct answer
+                </div>
+
+                <div class="lock-message">
+                    Complete Round 3 first
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     GAME
+====================================================== -->
+
+<section class="screen" id="gameScreen">
+
+    <div class="game-wrapper">
+
+        <div class="hud">
+
+            <div
+                class="hud-item"
+                id="gameRoundLabel">
+
+                ROUND 1
+
+            </div>
+
+            <div
+                class="hud-item money"
+                id="gameMoneyDisplay">
+
+                💰 PHP 0
+
+            </div>
+
+        </div>
+
+        <div class="progress-area">
+
+            <div class="progress-info">
+
+                <span id="progressText">
+                    Question 1 of 5
+                </span>
+
+                <span>
+                    GAME PROGRESS
+                </span>
+
+            </div>
+
+            <div class="progress-bar">
+
+                <div
+                    class="progress-fill"
+                    id="progressFill">
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="question-card">
+
+            <div
+                class="question-number"
+                id="questionNumber">
+
+                QUESTION 01
+
+            </div>
+
+            <div
+                class="question"
+                id="questionText">
+            </div>
+
+            <div
+                class="choices"
+                id="choicesContainer">
+            </div>
+
+            <button
+                class="pixel-button next-button"
+                id="nextButton"
+                onclick="nextQuestion()">
+
+                NEXT ▶
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     COMPLETE
+====================================================== -->
+
+<section class="screen" id="completeScreen">
+
+    <div class="complete-card pixel-panel">
+
+        <div class="big-pixel-icon">
+            🎉
+        </div>
+
+        <h2>
+            ROUND COMPLETE!
+        </h2>
+
+        <p class="earned" id="roundEarned">
+            YOU EARNED: PHP 0
+        </p>
+
+        <p class="total" id="roundTotal">
+            TOTAL EARNINGS: PHP 0
+        </p>
+
+        <br>
+
+        <button
+            class="pixel-button"
+            onclick="returnToRounds()">
+
+            BACK TO ROUNDS
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     FINAL
+====================================================== -->
+
+<section class="screen" id="finalScreen">
+
+    <div class="final-card pixel-panel">
+
+        <div class="big-pixel-icon">
+            🏆
+        </div>
+
+        <h2>
+            CONGRATULATIONS!
+        </h2>
+
+        <p>
+            You completed the entire game!
+        </p>
+
+        <div
+            class="final-money"
+            id="finalMoney">
+
+            PHP 500
+
+        </div>
+
+        <p>
+            You earned this prize by completing all four rounds!
+        </p>
+
+        <button
+            class="pixel-button"
+            id="claimButton"
+            onclick="claimPrize()">
+
+            🎁 CLAIM PRIZE FROM ME
+
+        </button>
+
+        <div
+            class="claim-message"
+            id="claimMessage">
+
+            <div class="claim-title">
+                🎉 PRIZE CLAIMED!
+            </div>
+
+            Your
+            <strong id="claimedAmount">
+                PHP 500
+            </strong>
+            prize is now claimed!
+
+            <br>
+
+            Please claim it from me! 💛
+
+        </div>
+
+        <button
+            class="pixel-button play-again"
+            onclick="showPlayAgainWarning()">
+
+            ↻ PLAY AGAIN
+
+        </button>
+
+    </div>
+
+</section>
+
+</div>
+
+
+<!-- ======================================================
+     WARNING
+====================================================== -->
+
+<div
+    class="warning-overlay"
+    id="warningOverlay">
+
+    <div class="warning-box">
+
+        <div class="warning-icon">
+            ⚠️
+        </div>
+
+        <h3>
+            ONE-TIME GAME
+        </h3>
+
+        <p>
+            This game is designed to be played only once.
+            <br><br>
+
+            If you start over, your current game and earnings
+            will be reset.
+            <br><br>
+
+            Are you sure you want to start over?
+        </p>
+
+        <div class="warning-buttons">
+
+            <button
+                class="cancel-button"
+                onclick="closeWarning()">
+
+                CANCEL
+
+            </button>
+
+            <button
+                class="start-over-button"
+                onclick="startOver()">
+
+                START OVER
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   QUESTIONS
+========================================================= */
+
+const rounds = [
+
+    {
+        name: "WARM-UP",
+        reward: 10,
+
+        questions: [
+
+            {
+                q: "Which country is known as the “Land of the Rising Sun”?",
+                choices: [
+                    "China",
+                    "Japan",
+                    "South Korea",
+                    "Thailand"
+                ],
+                answer: 1
+            },
+
+            {
+                q: "Which element has the chemical symbol “Au”?",
+                choices: [
+                    "Silver",
+                    "Gold",
+                    "Copper",
+                    "Iron"
+                ],
+                answer: 1
+            },
+
+            {
+                q: "Which layer of the Earth is directly beneath the crust?",
+                choices: [
+                    "Inner Core",
+                    "Outer Core",
+                    "Mantle",
+                    "Lithosphere"
+                ],
+                answer: 2
+            },
+
+            {
+                q: "Which part of the human brain is primarily associated with balance and coordination?",
+                choices: [
+                    "Cerebellum",
+                    "Heart",
+                    "Spinal cord",
+                    "Liver"
+                ],
+                answer: 0
+            },
+
+            {
+                q: "Which planet has the most prominent ring system in our Solar System?",
+                choices: [
+                    "Jupiter",
+                    "Uranus",
+                    "Neptune",
+                    "Saturn"
+                ],
+                answer: 3
+            }
+
+        ]
+    },
+
+
+    {
+        name: "GENERAL KNOWLEDGE",
+        reward: 20,
+
+        questions: [
+
+            {
+                q: "Which organ in the human body produces insulin?",
+                choices: [
+                    "Liver",
+                    "Pancreas",
+                    "Kidney",
+                    "Stomach"
+                ],
+                answer: 1
+            },
+
+            {
+                q: "What is the hardest natural substance on Earth?",
+                choices: [
+                    "Quartz",
+                    "Iron",
+                    "Diamond",
+                    "Granite"
+                ],
+                answer: 2
+            },
+
+            {
+                q: "Which blood type is known as the universal red-cell donor type?",
+                choices: [
+                    "AB positive",
+                    "A positive",
+                    "B negative",
+                    "O negative"
+                ],
+                answer: 3
+            },
+
+            {
+                q: "What is the main gas found in Earth's atmosphere?",
+                choices: [
+                    "Oxygen",
+                    "Nitrogen",
+                    "Carbon dioxide",
+                    "Hydrogen"
+                ],
+                answer: 1
+            },
+
+            {
+                q: "Which Filipino national hero wrote Noli Me Tangere and El Filibusterismo?",
+                choices: [
+                    "Andres Bonifacio",
+                    "Emilio Aguinaldo",
+                    "Jose Rizal",
+                    "Apolinario Mabini"
+                ],
+                answer: 2
+            }
+
+        ]
+    },
+
+
+    {
+        name: "ABOUT ME",
+        reward: 50,
+
+        questions: [
+
+            {
+                q: "What was my dream course or “TOTGA course”?",
+                choices: [
+                    "Chef",
+                    "Mass Communication",
+                    "Architecture",
+                    "Nursing"
+                ],
+                answer: 1
+            },
+
+            {
+                q: "Which game do I like the most?",
+                choices: [
+                    "GTA V",
+                    "The Sims 4",
+                    "CODM",
+                    "Minecraft"
+                ],
+                answer: 0
+            },
+
+            {
+                q: "Which hobby do you think I will always come back to?",
+                choices: [
+                    "Clay",
+                    "Drawing",
+                    "Reading",
+                    "Story making"
+                ],
+                answer: 3
+            },
+
+            {
+                q: "What color of clothing do I wear most often?",
+                choices: [
+                    "White",
+                    "Black",
+                    "Blue",
+                    "Beige"
+                ],
+                answer: 3
+            },
+
+            {
+                q: "What is my favorite animal?",
+                choices: [
+                    "Me",
+                    "Dogs",
+                    "Cats",
+                    "All of them"
+                ],
+                answer: 0
+            }
+
+        ]
+    },
+
+
+    {
+        name: "HOW WELL DO YOU KNOW ME?",
+        reward: 20,
+
+        questions: [
+
+            {
+                q: "When I see a cute animal while I’m outside, what am I most likely to do?",
+                choices: [
+                    "Ignore it",
+                    "Just look at it from afar",
+                    "Try to approach or talk to it",
+                    "Avoid it immediately"
+                ],
+                answer: 2
+            },
+
+            {
+                q: "When I want to buy something, how many days do I usually spend thinking about whether I should buy it?",
+                choices: [
+                    "1 day",
+                    "2 days",
+                    "3 days",
+                    "I buy it immediately"
+                ],
+                answer: 2
+            },
+
+            {
+                q: "Which makeup product can I not go without when I leave the house?",
+                choices: [
+                    "Eyebrow makeup",
+                    "Powder",
+                    "Blush",
+                    "Lip tint/lipstick"
+                ],
+                answer: 3
+            },
+
+            {
+                q: "When I’m working on a creative project and I don’t like the first result, what am I most likely to do?",
+                choices: [
+                    "Stop immediately",
+                    "Throw the project away",
+                    "Try to fix it until I like it",
+                    "Ask someone else to do it"
+                ],
+                answer: 2
+            },
+
+            {
+                q: "If I had to choose, where would I rather go?",
+                choices: [
+                    "The beach",
+                    "The mountains",
+                    "A farm",
+                    "A resort"
+                ],
+                answer: 0
+            }
+
+        ]
+    }
+
+];
+
+
+/* =========================================================
+   GAME VARIABLES
+========================================================= */
+
+let currentRound = 0;
+let currentQuestion = 0;
+let totalMoney = 0;
+let roundMoney = 0;
+let answered = false;
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+function loginGame() {
+
+    const name =
+        document.getElementById("loginName")
+        .value.trim();
+
+    const password =
+        document.getElementById("loginPassword")
+        .value;
+
+    const error =
+        document.getElementById("loginError");
+
+
+    if (
+        name.toLowerCase() === "geille amol" &&
+        password === "101104"
+    ) {
+
+        createAudio();
+
+        error.classList.remove("show");
+
+        showScreen("openingScreen");
+
+    } else {
+
+        createAudio();
+
+        wrongSound();
+
+        error.classList.add("show");
+
+    }
+}
+
+
+/* Allow Enter key to login */
+
+document.addEventListener("keydown", function(event) {
+
+    if (
+        event.key === "Enter" &&
+        document.getElementById("loginScreen")
+            .classList.contains("active")
+    ) {
+
+        loginGame();
+
+    }
+
+});
+
+
+/* =========================================================
+   AUDIO
+========================================================= */
+
+let audioContext;
+let musicPlaying = false;
+let musicTimer;
+let musicIndex = 0;
+
+const melody = [
+    392,440,494,523,
+    494,440,392,330,
+    392,440,494,587,
+    523,494,440,392
+];
+
+
+function createAudio() {
+
+    if (!audioContext) {
+
+        audioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+    }
+
+    if (audioContext.state === "suspended") {
+        audioContext.resume();
+    }
+}
+
+
+function playTone(
+    freq,
+    duration = .15,
+    type = "sine",
+    volume = .05
+) {
+
+    createAudio();
+
+    const oscillator =
+        audioContext.createOscillator();
+
+    const gain =
+        audioContext.createGain();
+
+    oscillator.type = type;
+
+    oscillator.frequency.value = freq;
+
+    gain.gain.setValueAtTime(
+        volume,
+        audioContext.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        audioContext.currentTime + duration
+    );
+
+    oscillator.connect(gain);
+
+    gain.connect(audioContext.destination);
+
+    oscillator.start();
+
+    oscillator.stop(
+        audioContext.currentTime + duration
+    );
+}
+
+
+function clickSound() {
+    playTone(500,.08,"square",.025);
+}
+
+
+function correctSound() {
+
+    playTone(660,.12,"square",.045);
+
+    setTimeout(() => {
+
+        playTone(880,.16,"square",.045);
+
+    },100);
+}
+
+
+function wrongSound() {
+
+    playTone(220,.18,"sawtooth",.035);
+}
+
+
+function completeSound() {
+
+    playTone(523,.12);
+
+    setTimeout(
+        () => playTone(659,.12),
+        120
+    );
+
+    setTimeout(
+        () => playTone(784,.18),
+        240
+    );
+}
+
+
+function prizeSound() {
+
+    playTone(523,.12);
+
+    setTimeout(
+        () => playTone(659,.12),
+        120
+    );
+
+    setTimeout(
+        () => playTone(784,.12),
+        240
+    );
+
+    setTimeout(
+        () => playTone(1046,.25),
+        360
+    );
+}
+
+
+function playMusicNote() {
+
+    if (!musicPlaying) return;
+
+    playTone(
+        melody[musicIndex],
+        .18,
+        "square",
+        .012
+    );
+
+    musicIndex =
+        (musicIndex + 1) % melody.length;
+}
+
+
+function startMusic() {
+
+    createAudio();
+
+    if (musicPlaying) return;
+
+    musicPlaying = true;
+
+    document.getElementById(
+        "musicToggle"
+    ).textContent = "🔊";
+
+    playMusicNote();
+
+    musicTimer =
+        setInterval(
+            playMusicNote,
+            360
+        );
+}
+
+
+function stopMusic() {
+
+    musicPlaying = false;
+
+    clearInterval(musicTimer);
+
+    document.getElementById(
+        "musicToggle"
+    ).textContent = "🔇";
+}
+
+
+function toggleMusic() {
+
+    if (musicPlaying) {
+        stopMusic();
+    } else {
+        startMusic();
+    }
+}
+
+
+/* =========================================================
+   SCREEN
+========================================================= */
+
+function showScreen(id) {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+
+            screen.classList.remove("active");
+
+        });
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+}
+
+
+/* =========================================================
+   START GAME
+========================================================= */
+
+function startGame() {
+
+    clickSound();
+
+    startMusic();
+
+    showScreen("loadingScreen");
+
+    setTimeout(() => {
+
+        currentRound = 0;
+        currentQuestion = 0;
+
+        totalMoney = 0;
+        roundMoney = 0;
+
+        updateMoney();
+
+        showScreen("roundScreen");
+
+    },1800);
+}
+
+
+/* =========================================================
+   START ROUND
+========================================================= */
+
+function startRound(roundIndex) {
+
+    clickSound();
+
+    currentRound = roundIndex;
+    currentQuestion = 0;
+    roundMoney = 0;
+
+    document.getElementById(
+        "gameRoundLabel"
+    ).textContent =
+        `ROUND ${roundIndex + 1}`;
+
+    showScreen("gameScreen");
+
+    loadQuestion();
+}
+
+
+/* =========================================================
+   LOAD QUESTION
+========================================================= */
+
+function loadQuestion() {
+
+    const round =
+        rounds[currentRound];
+
+    const question =
+        round.questions[currentQuestion];
+
+    answered = false;
+
+    document.getElementById(
+        "questionNumber"
+    ).textContent =
+        `QUESTION ${String(currentQuestion + 1).padStart(2,"0")}`;
+
+    document.getElementById(
+        "progressText"
+    ).textContent =
+        `Question ${currentQuestion + 1} of ${round.questions.length}`;
+
+    document.getElementById(
+        "progressFill"
+    ).style.width =
+        `${((currentQuestion + 1) / round.questions.length) * 100}%`;
+
+    document.getElementById(
+        "questionText"
+    ).textContent =
+        question.q;
+
+    const container =
+        document.getElementById(
+            "choicesContainer"
+        );
+
+    container.innerHTML = "";
+
+    question.choices.forEach(
+        (choice,index) => {
+
+            const button =
+                document.createElement("button");
+
+            button.className = "choice";
+
+            button.textContent =
+                `${String.fromCharCode(65 + index)}. ${choice}`;
+
+            button.onclick =
+                () =>
+                    checkAnswer(
+                        button,
+                        index
+                    );
+
+            container.appendChild(button);
+
+        }
+    );
+
+    document.getElementById(
+        "nextButton"
+    ).classList.remove("show");
+}
+
+
+/* =========================================================
+   CHECK ANSWER
+========================================================= */
+
+function checkAnswer(
+    selectedButton,
+    selectedIndex
+) {
+
+    if (answered) return;
+
+    answered = true;
+
+    const question =
+        rounds[currentRound]
+        .questions[currentQuestion];
+
+    const choices =
+        document.querySelectorAll(".choice");
+
+    choices.forEach(button => {
+        button.disabled = true;
+    });
+
+    if (
+        selectedIndex ===
+        question.answer
+    ) {
+
+        selectedButton.classList.add("correct");
+
+        roundMoney +=
+            rounds[currentRound].reward;
+
+        totalMoney +=
+            rounds[currentRound].reward;
+
+        correctSound();
+
+    } else {
+
+        selectedButton.classList.add("wrong");
+
+        choices[
+            question.answer
+        ].classList.add("correct");
+
+        wrongSound();
+
+    }
+
+    updateMoney();
+
+    document.getElementById(
+        "nextButton"
+    ).classList.add("show");
+}
+
+
+/* =========================================================
+   NEXT QUESTION
+========================================================= */
+
+function nextQuestion() {
+
+    clickSound();
+
+    const round =
+        rounds[currentRound];
+
+    if (
+        currentQuestion <
+        round.questions.length - 1
+    ) {
+
+        currentQuestion++;
+
+        loadQuestion();
+
+    } else {
+
+        finishRound();
+
+    }
+}
+
+
+/* =========================================================
+   FINISH ROUND
+========================================================= */
+
+function finishRound() {
+
+    completeSound();
+
+    document.getElementById(
+        "roundEarned"
+    ).textContent =
+        `YOU EARNED: PHP ${roundMoney}`;
+
+    document.getElementById(
+        "roundTotal"
+    ).textContent =
+        `TOTAL EARNINGS: PHP ${totalMoney}`;
+
+    showScreen("completeScreen");
+}
+
+
+/* =========================================================
+   RETURN TO ROUNDS
+========================================================= */
+
+function returnToRounds() {
+
+    clickSound();
+
+    if (currentRound === 3) {
+
+        document.getElementById(
+            "finalMoney"
+        ).textContent =
+            `PHP ${totalMoney}`;
+
+        document.getElementById(
+            "claimedAmount"
+        ).textContent =
+            `PHP ${totalMoney}`;
+
+        showScreen("finalScreen");
+
+        return;
+    }
+
+    const nextRound =
+        currentRound + 1;
+
+    const card =
+        document.getElementById(
+            `roundCard${nextRound}`
+        );
+
+    card.classList.remove("locked");
+
+    card.innerHTML = `
+
+        <div class="round-badge">
+            LEVEL ${String(nextRound + 1).padStart(2,"0")}
+        </div>
+
+        <div class="lock-icon">
+            🔓
+        </div>
+
+        <div class="round-number">
+            ROUND ${nextRound + 1}
+        </div>
+
+        <div class="round-name">
+            ${rounds[nextRound].name}
+        </div>
+
+        <div class="reward">
+            PHP ${rounds[nextRound].reward} per correct answer
+        </div>
+
+        <button
+            class="round-button"
+            onclick="startRound(${nextRound})">
+
+            PLAY ROUND
+
+        </button>
+    `;
+
+    updateMoney();
+
+    showScreen("roundScreen");
+}
+
+
+/* =========================================================
+   MONEY
+========================================================= */
+
+function updateMoney() {
+
+    document.getElementById(
+        "roundMoneyDisplay"
+    ).textContent =
+        `💰 PHP ${totalMoney}`;
+
+    document.getElementById(
+        "gameMoneyDisplay"
+    ).textContent =
+        `💰 PHP ${totalMoney}`;
+}
+
+
+/* =========================================================
+   CLAIM PRIZE
+========================================================= */
+
+function claimPrize() {
+
+    prizeSound();
+
+    document.getElementById(
+        "claimButton"
+    ).style.display = "none";
+
+    document.getElementById(
+        "claimedAmount"
+    ).textContent =
+        `PHP ${totalMoney}`;
+
+    document.getElementById(
+        "claimMessage"
+    ).classList.add("show");
+}
+
+
+/* =========================================================
+   PLAY AGAIN
+========================================================= */
+
+function showPlayAgainWarning() {
+
+    clickSound();
+
+    document.getElementById(
+        "warningOverlay"
+    ).classList.add("show");
+}
+
+
+function closeWarning() {
+
+    clickSound();
+
+    document.getElementById(
+        "warningOverlay"
+    ).classList.remove("show");
+}
+
+
+function startOver() {
+
+    clickSound();
+
+    totalMoney = 0;
+    roundMoney = 0;
+
+    currentRound = 0;
+    currentQuestion = 0;
+
+    answered = false;
+
+    stopMusic();
+
+    location.reload();
+}
+
+
+/* =========================================================
+   CLICK OUTSIDE WARNING
+========================================================= */
+
+document
+    .getElementById("warningOverlay")
+    .addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target === this
+            ) {
+
+                closeWarning();
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
